@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snake Digestive System Game</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>🐍 Snake Digestive System Game</h1>
+        <p class="subtitle">Help the snake eat and digest the apples!</p>
+        
+        <div class="game-info">
+            <div class="info-box">
+                <p>Score: <span id="score">0</span></p>
+            </div>
+            <div class="info-box">
+                <p>Time: <span id="timer">60</span>s</p>
+            </div>
+            <div class="info-box">
+                <p>Apple Size: <span id="appleSize">1.0</span>x</p>
+            </div>
+        </div>
+
+        <canvas id="gameCanvas" width="600" height="400"></canvas>
+
+        <div class="controls">
+            <p><strong>Controls:</strong></p>
+            <p>🔴 W/A/S/D - Move the snake</p>
+            <p>🔴 SPACE - Start/Restart game</p>
+        </div>
+
+        <div id="gameOver" class="game-over hidden">
+            <div class="game-over-content">
+                <h2>Game Over!</h2>
+                <p>Final Score: <span id="finalScore">0</span></p>
+                <p>Press SPACE to play again</p>
+            </div>
+        </div>
+
+        <div id="startScreen" class="start-screen">
+            <div class="start-content">
+                <h2>Welcome! 🐍</h2>
+                <p>Help the snake eat apples and learn about digestion!</p>
+                <p class="instructions">
+                    🟩 The apple starts small<br>
+                    🟩 It grows bigger as the snake eats<br>
+                    🟩 The snake grows bigger with bigger apples<br>
+                    🟩 Don't hit the walls!<br>
+                    🟩 You have 60 seconds
+                </p>
+                <p class="big-text">Press SPACE to START</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
