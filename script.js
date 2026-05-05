@@ -47,21 +47,22 @@ function handleKeyPress(e) {
         }
         return;
     }
-if (key === 'w' && dy !== 1) {
-    nextDx = 0;
-    nextDy = -1;
-} else if (key === 's' && dy !== -1) {
-    nextDx = 0;
-    nextDy = 1;
-} else if (key === 'a' && dx !== 1) {
-    nextDx = -1;
-    nextDy = 0;
-} else if (key === 'd' && dx !== -1) {
-    nextDx = 1;
-    nextDy = 0;
-}
 
-    
+    if (gameRunning) {
+        if (key === 'w' && dy !== 1) {
+            nextDx = 0;
+            nextDy = -1;
+        } else if (key === 's' && dy !== -1) {
+            nextDx = 0;
+            nextDy = 1;
+        } else if (key === 'a' && dx !== 1) {
+            nextDx = -1;
+            nextDy = 0;
+        } else if (key === 'd' && dx !== -1) {
+            nextDx = 1;
+            nextDy = 0;
+        }
+    }
 }
 
 function startGame() {
