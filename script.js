@@ -240,3 +240,4 @@ function endGame() {
 window.addEventListener('load', () => {
     startScreen.classList.remove('hidden');
 });
+}
