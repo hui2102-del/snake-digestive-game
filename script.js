@@ -63,7 +63,7 @@ function handleKeyPress(e) {
             nextDy = 0;
         }
     }
-
+}
 function startGame() {
     snake = [{ x: 10, y: 10 }];
     dx = 0;
