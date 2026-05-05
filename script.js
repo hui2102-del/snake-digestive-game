@@ -108,8 +108,7 @@ function gameLoop() {
     if (!gameRunning) return;
 
     // Only update if the snake is actually moving
-   if (nextDx !== 0 || nextDy !== 0)  // ✅ Correct - checks for player input
-{
+   if (nextDx !== 0 || nextDy !== 0) { // ✅ Correct - checks for player input
         update();
     }
 
