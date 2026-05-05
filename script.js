@@ -62,7 +62,7 @@ function handleKeyPress(e) {
     nextDy = 0;
 }
 
-    }
+    
 }
 
 function startGame() {
