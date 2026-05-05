@@ -47,8 +47,7 @@ function handleKeyPress(e) {
         }
         return;
     }
-
-  if (key === 'w' && dy !== 1) {
+if (key === 'w' && dy !== 1) {
     nextDx = 0;
     nextDy = -1;
 } else if (key === 's' && dy !== -1) {
