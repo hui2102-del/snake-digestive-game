@@ -10,8 +10,8 @@ let snake = [
 ];
 
 let apple = {
-    x: Math.floor(Math.random() * (tileCount - 1)),
-    y: Math.floor(Math.random() * (tileCount - 1)),
+    x: Math.floor(Math.random() * (tileCount - 2)) + 1,
+    y: Math.floor(Math.random() * (tileCount - 2)) + 1,
     size: 1.0
 };
 
@@ -21,7 +21,7 @@ let nextDx = 0;
 let nextDy = 0;
 
 let score = 0;
-let gameRunning = false; 
+let gameRunning = false;
 let gameOver = false;
 let timeLeft = 60;
 let gameStarted = false;
@@ -122,7 +122,7 @@ function gameLoop() {
 
     draw();
 
-    setTimeout(gameLoop, 100);
+    setTimeout(gameLoop, 200);
 }
 
 function update() {
@@ -132,7 +132,7 @@ function update() {
     const head = { x: snake[0].x + dx, y: snake[0].y + dy };
 
     // Check wall collision
-    if (head.x < 0 || head.x >= tileCount || head.y < 0 || head.y >= tileCount) {
+    if (head.x <= 0 || head.x >= tileCount - 1 || head.y <= 0 || head.y >= tileCount - 1) {
         endGame();
         return;
     }
@@ -170,6 +170,11 @@ function draw() {
     // Clear canvas
     ctx.fillStyle = '#f5f5f5';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Draw border box
+    ctx.strokeStyle = '#000000';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(gridSize, gridSize, canvas.width - gridSize * 2, canvas.height - gridSize * 2);
 
     // Draw grid (optional, for visual help)
     ctx.strokeStyle = '#eee';
@@ -228,8 +233,8 @@ function draw() {
         }
     });
 
-    // Draw apple (red, grows with size)
-    ctx.fillStyle = '#ff4444';
+    // Draw apple (red, bigger and more visible)
+    ctx.fillStyle = '#dd0000';
     const appleRadius = (gridSize / 2) * apple.size;
     const applePixelX = apple.x * gridSize + gridSize / 2;
     const applePixelY = apple.y * gridSize + gridSize / 2;
@@ -239,7 +244,7 @@ function draw() {
     ctx.fill();
 
     // Apple shine
-    ctx.fillStyle = 'rgba(255, 100, 100, 0.6)';
+    ctx.fillStyle = 'rgba(255, 100, 100, 0.8)';
     ctx.beginPath();
     ctx.arc(applePixelX - appleRadius / 3, applePixelY - appleRadius / 3, appleRadius / 3, 0, Math.PI * 2);
     ctx.fill();
@@ -270,3 +275,4 @@ function endGame() {
 window.addEventListener('load', () => {
     startScreen.classList.remove('hidden');
 });
+
