@@ -1,3 +1,4 @@
+
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
@@ -65,6 +66,25 @@ function handleKeyPress(e) {
     }
 }
 
+function generateApple() {
+    let newApple;
+    let isOnSnake = true;
+    
+    // Keep generating until apple spawns on an empty tile (not on snake)
+    while (isOnSnake) {
+        newApple = {
+            x: Math.floor(Math.random() * (tileCount - 1)),
+            y: Math.floor(Math.random() * (tileCount - 1)),
+            size: 1.0
+        };
+        
+        // Check if apple spawned on snake
+        isOnSnake = snake.some(segment => segment.x === newApple.x && segment.y === newApple.y);
+    }
+    
+    return newApple;
+}
+
 function startGame() {
     snake = [{ x: 10, y: 10 }];
     dx = 0;
@@ -76,11 +96,7 @@ function startGame() {
     gameRunning = true;
     gameOver = false;
     gameStarted = true;
-    apple = {
-        x: Math.floor(Math.random() * tileCount),
-        y: Math.floor(Math.random() * tileCount),
-        size: 1.0
-    };
+    apple = generateApple();
 
     startScreen.classList.add('hidden');
     gameOverScreen.classList.add('hidden');
@@ -150,12 +166,8 @@ function update() {
             snake.push({ ...snake[snake.length - 1] });
         }
 
-        // Generate new apple
-        apple = {
-            x: Math.floor(Math.random() * tileCount),
-            y: Math.floor(Math.random() * tileCount),
-            size: 1.0
-        };
+        // Generate new apple (fixed to stay inside the box)
+        apple = generateApple();
         appleSizeDisplay.textContent = '1.0';
     } else {
         snake.pop();
@@ -241,5 +253,3 @@ function endGame() {
 window.addEventListener('load', () => {
     startScreen.classList.remove('hidden');
 });
-
-
