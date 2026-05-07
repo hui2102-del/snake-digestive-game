@@ -10,8 +10,8 @@ let snake = [
 ];
 
 let apple = {
-    x: Math.floor(Math.random() * (tileCount - 2)) + 1,
-    y: Math.floor(Math.random() * (tileCount - 2)) + 1,
+    x: Math.floor(Math.random() * (tileCount - 4)) + 2,
+    y: Math.floor(Math.random() * (tileCount - 4)) + 2,
     size: 1.0
 };
 
@@ -69,8 +69,8 @@ function generateNewApple() {
     let newX, newY, isOnSnake;
     
     do {
-        newX = Math.floor(Math.random() * (tileCount - 2)) + 1;
-        newY = Math.floor(Math.random() * (tileCount - 2)) + 1;
+        newX = Math.floor(Math.random() * (tileCount - 4)) + 2;
+        newY = Math.floor(Math.random() * (tileCount - 4)) + 2;
         isOnSnake = snake.some(segment => segment.x === newX && segment.y === newY);
     } while (isOnSnake);
     
@@ -132,7 +132,7 @@ function update() {
     const head = { x: snake[0].x + dx, y: snake[0].y + dy };
 
     // Check wall collision
-    if (head.x <= 0 || head.x >= tileCount - 1 || head.y <= 0 || head.y >= tileCount - 1) {
+    if (head.x < 1 || head.x > tileCount - 2 || head.y < 1 || head.y > tileCount - 2) {
         endGame();
         return;
     }
@@ -275,4 +275,5 @@ function endGame() {
 window.addEventListener('load', () => {
     startScreen.classList.remove('hidden');
 });
+
 
