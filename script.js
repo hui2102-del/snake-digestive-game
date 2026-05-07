@@ -11,8 +11,8 @@ let snake = [
 ];
 
 let apple = {
-    x: Math.floor(Math.random() * tileCount),
-    y: Math.floor(Math.random() * tileCount),
+    x: Math.floor(Math.random() * (tileCount - 1)),
+    y: Math.floor(Math.random() * (tileCount - 1)),
     size: 1.0
 };
 
@@ -66,25 +66,6 @@ function handleKeyPress(e) {
     }
 }
 
-function generateApple() {
-    let newApple;
-    let isOnSnake = true;
-    
-    // Keep generating until apple spawns on an empty tile (not on snake)
-    while (isOnSnake) {
-        newApple = {
-            x: Math.floor(Math.random() * (tileCount - 1)),
-            y: Math.floor(Math.random() * (tileCount - 1)),
-            size: 1.0
-        };
-        
-        // Check if apple spawned on snake
-        isOnSnake = snake.some(segment => segment.x === newApple.x && segment.y === newApple.y);
-    }
-    
-    return newApple;
-}
-
 function startGame() {
     snake = [{ x: 10, y: 10 }];
     dx = 0;
@@ -96,7 +77,11 @@ function startGame() {
     gameRunning = true;
     gameOver = false;
     gameStarted = true;
-    apple = generateApple();
+    apple = {
+        x: Math.floor(Math.random() * (tileCount - 1)),
+        y: Math.floor(Math.random() * (tileCount - 1)),
+        size: 1.0
+    };
 
     startScreen.classList.add('hidden');
     gameOverScreen.classList.add('hidden');
@@ -163,93 +148,5 @@ function update() {
         // Add segments to snake based on apple size
         const newSegmentsCount = Math.floor(apple.size);
         for (let i = 0; i < newSegmentsCount; i++) {
-            snake.push({ ...snake[snake.length - 1] });
-        }
+            snake.push({*
 
-        // Generate new apple (fixed to stay inside the box)
-        apple = generateApple();
-        appleSizeDisplay.textContent = '1.0';
-    } else {
-        snake.pop();
-    }
-}
-
-function draw() {
-    // Clear canvas
-    ctx.fillStyle = '#f5f5f5';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    // Draw grid (optional, for visual help)
-    ctx.strokeStyle = '#eee';
-    ctx.lineWidth = 0.5;
-    for (let i = 0; i <= tileCount; i++) {
-        ctx.beginPath();
-        ctx.moveTo(i * gridSize, 0);
-        ctx.lineTo(i * gridSize, canvas.height);
-        ctx.stroke();
-
-        ctx.beginPath();
-        ctx.moveTo(0, i * gridSize);
-        ctx.lineTo(canvas.width, i * gridSize);
-        ctx.stroke();
-    }
-
-    // Draw snake (green)
-    snake.forEach((segment, index) => {
-        if (index === 0) {
-            ctx.fillStyle = '#00a000'; // Darker green for head
-        } else {
-            ctx.fillStyle = '#22cc22'; // Bright green for body
-        }
-        ctx.fillRect(
-            segment.x * gridSize + 1,
-            segment.y * gridSize + 1,
-            gridSize - 2,
-            gridSize - 2
-        );
-        ctx.strokeStyle = '#008000';
-        ctx.lineWidth = 1;
-        ctx.strokeRect(
-            segment.x * gridSize + 1,
-            segment.y * gridSize + 1,
-            gridSize - 2,
-            gridSize - 2
-        );
-    });
-
-    // Draw apple (red, grows with size)
-    ctx.fillStyle = '#ff4444';
-    const appleRadius = (gridSize / 2) * apple.size;
-    const applePixelX = apple.x * gridSize + gridSize / 2;
-    const applePixelY = apple.y * gridSize + gridSize / 2;
-
-    ctx.beginPath();
-    ctx.arc(applePixelX, applePixelY, appleRadius, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Apple stem
-    ctx.strokeStyle = '#228B22';
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo(applePixelX, applePixelY - appleRadius);
-    ctx.lineTo(applePixelX, applePixelY - appleRadius - 5);
-    ctx.stroke();
-}
-
-function updateDisplay() {
-    scoreDisplay.textContent = score;
-    timerDisplay.textContent = timeLeft;
-    appleSizeDisplay.textContent = apple.size.toFixed(1);
-}
-
-function endGame() {
-    gameRunning = false;
-    gameOver = true;
-    finalScoreDisplay.textContent = score;
-    gameOverScreen.classList.remove('hidden');
-}
-
-// Show start screen on load
-window.addEventListener('load', () => {
-    startScreen.classList.remove('hidden');
-});
