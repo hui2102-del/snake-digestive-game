@@ -25,7 +25,6 @@ let gameRunning = false;
 let gameOver = false;
 let timeLeft = 60;
 let gameStarted = false;
-let timerInterval = null;
 
 // DOM Elements
 const scoreDisplay = document.getElementById('score');
@@ -77,9 +76,11 @@ function startGame() {
     gameRunning = true;
     gameOver = false;
     gameStarted = true;
-    
-    // Generate apple away from snake
-    generateNewApple();
+    apple = {
+        x: Math.floor(Math.random() * tileCount),
+        y: Math.floor(Math.random() * tileCount),
+        size: 1.0
+    };
 
     startScreen.classList.add('hidden');
     gameOverScreen.classList.add('hidden');
@@ -89,37 +90,8 @@ function startGame() {
     gameLoop();
 }
 
-function generateNewApple() {
-    let newX, newY, isOnSnake;
-    
-    do {
-        isOnSnake = false;
-        newX = Math.floor(Math.random() * tileCount);
-        newY = Math.floor(Math.random() * tileCount);
-        
-        // Make sure apple doesn't spawn on snake
-        for (let segment of snake) {
-            if (segment.x === newX && segment.y === newY) {
-                isOnSnake = true;
-                break;
-            }
-        }
-    } while (isOnSnake);
-    
-    apple = {
-        x: newX,
-        y: newY,
-        size: 1.0
-    };
-}
-
 function startTimer() {
-    // Clear any existing timer
-    if (timerInterval) {
-        clearInterval(timerInterval);
-    }
-    
-    timerInterval = setInterval(() => {
+    const timerInterval = setInterval(() => {
         if (gameRunning) {
             timeLeft--;
             timerDisplay.textContent = timeLeft;
@@ -142,7 +114,7 @@ function gameLoop() {
 
     draw();
 
-    setTimeout(gameLoop, 150);
+    setTimeout(gameLoop, 100);
 }
 
 function update() {
@@ -178,8 +150,12 @@ function update() {
             snake.push({ ...snake[snake.length - 1] });
         }
 
-        // Generate new apple away from snake
-        generateNewApple();
+        // Generate new apple
+        apple = {
+            x: Math.floor(Math.random() * tileCount),
+            y: Math.floor(Math.random() * tileCount),
+            size: 1.0
+        };
         appleSizeDisplay.textContent = '1.0';
     } else {
         snake.pop();
@@ -206,74 +182,37 @@ function draw() {
         ctx.stroke();
     }
 
-    // Draw snake (green with cartoon style)
+    // Draw snake (green)
     snake.forEach((segment, index) => {
         if (index === 0) {
-            // Head - darker green with eyes
-            ctx.fillStyle = '#00a000';
-            ctx.beginPath();
-            ctx.roundRect(
-                segment.x * gridSize + 1,
-                segment.y * gridSize + 1,
-                gridSize - 2,
-                gridSize - 2,
-                4
-            );
-            ctx.fill();
-            ctx.strokeStyle = '#008000';
-            ctx.lineWidth = 2;
-            ctx.stroke();
-            
-            // Draw eyes for cartoon style
-            ctx.fillStyle = 'white';
-            ctx.beginPath();
-            ctx.arc(segment.x * gridSize + 6, segment.y * gridSize + 6, 2, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.beginPath();
-            ctx.arc(segment.x * gridSize + 14, segment.y * gridSize + 6, 2, 0, Math.PI * 2);
-            ctx.fill();
-            
-            // Pupils
-            ctx.fillStyle = 'black';
-            ctx.beginPath();
-            ctx.arc(segment.x * gridSize + 6, segment.y * gridSize + 6, 1, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.beginPath();
-            ctx.arc(segment.x * gridSize + 14, segment.y * gridSize + 6, 1, 0, Math.PI * 2);
-            ctx.fill();
+            ctx.fillStyle = '#00a000'; // Darker green for head
         } else {
-            // Body - bright green with rounded corners
-            ctx.fillStyle = '#22cc22';
-            ctx.beginPath();
-            ctx.roundRect(
-                segment.x * gridSize + 1,
-                segment.y * gridSize + 1,
-                gridSize - 2,
-                gridSize - 2,
-                3
-            );
-            ctx.fill();
-            ctx.strokeStyle = '#008000';
-            ctx.lineWidth = 1;
-            ctx.stroke();
+            ctx.fillStyle = '#22cc22'; // Bright green for body
         }
+        ctx.fillRect(
+            segment.x * gridSize + 1,
+            segment.y * gridSize + 1,
+            gridSize - 2,
+            gridSize - 2
+        );
+        ctx.strokeStyle = '#008000';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(
+            segment.x * gridSize + 1,
+            segment.y * gridSize + 1,
+            gridSize - 2,
+            gridSize - 2
+        );
     });
 
-    // Draw apple (red, grows with size, cartoon style)
+    // Draw apple (red, grows with size)
     ctx.fillStyle = '#ff4444';
     const appleRadius = (gridSize / 2) * apple.size;
     const applePixelX = apple.x * gridSize + gridSize / 2;
     const applePixelY = apple.y * gridSize + gridSize / 2;
 
-    // Apple body with shine
     ctx.beginPath();
     ctx.arc(applePixelX, applePixelY, appleRadius, 0, Math.PI * 2);
-    ctx.fill();
-    
-    // Apple shine (cartoon style)
-    ctx.fillStyle = 'rgba(255, 200, 200, 0.6)';
-    ctx.beginPath();
-    ctx.arc(applePixelX - appleRadius / 3, applePixelY - appleRadius / 3, appleRadius / 3, 0, Math.PI * 2);
     ctx.fill();
 
     // Apple stem
@@ -283,12 +222,6 @@ function draw() {
     ctx.moveTo(applePixelX, applePixelY - appleRadius);
     ctx.lineTo(applePixelX, applePixelY - appleRadius - 5);
     ctx.stroke();
-    
-    // Apple leaf (cartoon style)
-    ctx.fillStyle = '#228B22';
-    ctx.beginPath();
-    ctx.ellipse(applePixelX + 3, applePixelY - appleRadius - 3, 4, 3, 0.3, 0, Math.PI * 2);
-    ctx.fill();
 }
 
 function updateDisplay() {
@@ -300,9 +233,6 @@ function updateDisplay() {
 function endGame() {
     gameRunning = false;
     gameOver = true;
-    if (timerInterval) {
-        clearInterval(timerInterval);
-    }
     finalScoreDisplay.textContent = score;
     gameOverScreen.classList.remove('hidden');
 }
@@ -311,4 +241,5 @@ function endGame() {
 window.addEventListener('load', () => {
     startScreen.classList.remove('hidden');
 });
+
 
