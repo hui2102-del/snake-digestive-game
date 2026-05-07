@@ -1,4 +1,3 @@
-
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
@@ -22,7 +21,7 @@ let nextDx = 0;
 let nextDy = 0;
 
 let score = 0;
-let gameRunning = false;
+let gameRunning = false; 
 let gameOver = false;
 let timeLeft = 60;
 let gameStarted = false;
@@ -66,6 +65,18 @@ function handleKeyPress(e) {
     }
 }
 
+function generateNewApple() {
+    let newX, newY, isOnSnake;
+    
+    do {
+        newX = Math.floor(Math.random() * (tileCount - 2)) + 1;
+        newY = Math.floor(Math.random() * (tileCount - 2)) + 1;
+        isOnSnake = snake.some(segment => segment.x === newX && segment.y === newY);
+    } while (isOnSnake);
+    
+    return { x: newX, y: newY, size: 1.0 };
+}
+
 function startGame() {
     snake = [{ x: 10, y: 10 }];
     dx = 0;
@@ -77,11 +88,7 @@ function startGame() {
     gameRunning = true;
     gameOver = false;
     gameStarted = true;
-    apple = {
-        x: Math.floor(Math.random() * (tileCount - 1)),
-        y: Math.floor(Math.random() * (tileCount - 1)),
-        size: 1.0
-    };
+    apple = generateNewApple();
 
     startScreen.classList.add('hidden');
     gameOverScreen.classList.add('hidden');
@@ -148,5 +155,118 @@ function update() {
         // Add segments to snake based on apple size
         const newSegmentsCount = Math.floor(apple.size);
         for (let i = 0; i < newSegmentsCount; i++) {
-            snake.push({*
+            snake.push({ ...snake[snake.length - 1] });
+        }
 
+        // Generate new apple
+        apple = generateNewApple();
+        appleSizeDisplay.textContent = '1.0';
+    } else {
+        snake.pop();
+    }
+}
+
+function draw() {
+    // Clear canvas
+    ctx.fillStyle = '#f5f5f5';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Draw grid (optional, for visual help)
+    ctx.strokeStyle = '#eee';
+    ctx.lineWidth = 0.5;
+    for (let i = 0; i <= tileCount; i++) {
+        ctx.beginPath();
+        ctx.moveTo(i * gridSize, 0);
+        ctx.lineTo(i * gridSize, canvas.height);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(0, i * gridSize);
+        ctx.lineTo(canvas.width, i * gridSize);
+        ctx.stroke();
+    }
+
+    // Draw snake (realistic with gradient)
+    snake.forEach((segment, index) => {
+        // Gradient effect - head is darker, tail is lighter
+        const colorIntensity = Math.floor((index / snake.length) * 155);
+        const headColor = index === 0 ? '#1a5c1a' : `rgb(${34 + colorIntensity}, ${204 - colorIntensity}, ${34 + colorIntensity})`;
+        
+        ctx.fillStyle = headColor;
+        ctx.fillRect(
+            segment.x * gridSize + 1,
+            segment.y * gridSize + 1,
+            gridSize - 2,
+            gridSize - 2
+        );
+        
+        // Add border for depth
+        ctx.strokeStyle = '#0a3a0a';
+        ctx.lineWidth = 1.5;
+        ctx.strokeRect(
+            segment.x * gridSize + 1,
+            segment.y * gridSize + 1,
+            gridSize - 2,
+            gridSize - 2
+        );
+        
+        // Add eyes to head
+        if (index === 0) {
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(
+                segment.x * gridSize + 5,
+                segment.y * gridSize + 5,
+                3,
+                3
+            );
+            ctx.fillRect(
+                segment.x * gridSize + gridSize - 8,
+                segment.y * gridSize + 5,
+                3,
+                3
+            );
+        }
+    });
+
+    // Draw apple (red, grows with size)
+    ctx.fillStyle = '#ff4444';
+    const appleRadius = (gridSize / 2) * apple.size;
+    const applePixelX = apple.x * gridSize + gridSize / 2;
+    const applePixelY = apple.y * gridSize + gridSize / 2;
+
+    ctx.beginPath();
+    ctx.arc(applePixelX, applePixelY, appleRadius, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Apple shine
+    ctx.fillStyle = 'rgba(255, 100, 100, 0.6)';
+    ctx.beginPath();
+    ctx.arc(applePixelX - appleRadius / 3, applePixelY - appleRadius / 3, appleRadius / 3, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Apple stem
+    ctx.strokeStyle = '#228B22';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(applePixelX, applePixelY - appleRadius);
+    ctx.lineTo(applePixelX, applePixelY - appleRadius - 5);
+    ctx.stroke();
+}
+
+function updateDisplay() {
+    scoreDisplay.textContent = score;
+    timerDisplay.textContent = timeLeft;
+    appleSizeDisplay.textContent = apple.size.toFixed(1);
+}
+
+function endGame() {
+    gameRunning = false;
+    gameOver = true;
+    finalScoreDisplay.textContent = score;
+    gameOverScreen.classList.remove('hidden');
+}
+
+// Show start screen on load
+window.addEventListener('load', () => {
+    startScreen.classList.remove('hidden');
+});
