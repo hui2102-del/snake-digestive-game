@@ -7,7 +7,7 @@ const tileCount = canvas.width / gridSize;
 
 let snake = [
     { x: 10, y: 10 }
-];
+];         
 
 let apple = {
     x: Math.floor(Math.random() * (tileCount - 4)) + 2,
@@ -275,5 +275,3 @@ function endGame() {
 window.addEventListener('load', () => {
     startScreen.classList.remove('hidden');
 });
-
-
